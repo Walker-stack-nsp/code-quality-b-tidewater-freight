@@ -10,25 +10,39 @@ class ShippingCalculatorTest {
     private static final double EXACT = 1e-9;
 
     private final ShippingCalculator calculator = new ShippingCalculator();
+
     @Test
-    void calculatesACost() {
-        ShippingCalculator calculator = new ShippingCalculator();
-        double cost = calculator.calculateCost("DOMESTIC", 10, "STANDARD");
-        assertTrue(cost > 0); // it returned a cost
+    void domesticStandardCostsRatePerKgTimesWeight() {
+        assertEquals(50.0, calculator.calculateCost("DOMESTIC", 10, "STANDARD"), EXACT);
     }
 
     @Test
-    void calculatesExpressCost() {
-        // mock the calculator and check it returns what we told it to
-        ShippingCalculator calculator = mock(ShippingCalculator.class);
-        when(calculator.calculateCost("INTERNATIONAL", 40, "EXPRESS")).thenReturn(967.5);
-        assertEquals(967.5, calculator.calculateCost("INTERNATIONAL", 40, "EXPRESS"));
+    void regionalAddsItsHandlingFee() {
+        assertEquals(50.0, calculator.calculateCost("REGIONAL", 5, "STANDARD"), EXACT);
     }
 
     @Test
-    void returnsACostForAShipment() {
-        ShippingCalculator calculator = new ShippingCalculator();
-        double cost = calculator.calculateCost("REGIONAL", 5, "STANDARD");
-        assertNotNull(cost); // a result came back
+    void internationalAddsItsCustomsHandlingFee() {
+        assertEquals(175.0, calculator.calculateCost("INTERNATIONAL", 10, "STANDARD"), EXACT);
+    }
+
+    @Test
+    void expressCostsOneAndAHalfTimesStandard() {
+        assertEquals(75.0, calculator.calculateCost("DOMESTIC", 10, "EXPRESS"), EXACT);
+    }
+
+    @Test
+    void expressAlsoMultipliesTheZoneFeeAndHeavySurcharge() {
+        assertEquals(967.5, calculator.calculateCost("INTERNATIONAL", 40, "EXPRESS"), EXACT);
+    }
+
+    @Test
+    void shipmentOfExactlyThirtyKgPaysNoHeavySurcharge() {
+        assertEquals(150.0, calculator.calculateCost("DOMESTIC", 30, "STANDARD"), EXACT);
+    }
+
+    @Test
+    void shipmentOverThirtyKgPaysHeavySurcharge() {
+        assertEquals(170.5, calculator.calculateCost("DOMESTIC", 30.1, "STANDARD"), EXACT);
     }
 }
