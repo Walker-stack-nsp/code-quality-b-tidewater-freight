@@ -8,6 +8,8 @@ import static org.mockito.Mockito.*;
 class ShippingCalculatorTest {
 
     private static final double EXACT = 1e-9;
+
+    private final ShippingCalculator calculator = new ShippingCalculator();
     @Test
     void calculatesACost() {
         ShippingCalculator calculator = new ShippingCalculator();
