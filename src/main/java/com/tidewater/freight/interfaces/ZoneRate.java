@@ -1,5 +1,7 @@
 package com.tidewater.freight.interfaces;
 
+import com.tidewater.freight.model.PerKilogramRate;
+
 import java.math.BigDecimal;
 
 /**
