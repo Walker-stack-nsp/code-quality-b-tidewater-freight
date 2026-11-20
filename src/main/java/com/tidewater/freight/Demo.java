@@ -1,6 +1,7 @@
 package com.tidewater.freight;
 
 import com.tidewater.freight.exceptions.ShippingException;
+import com.tidewater.freight.model.Quote;
 import com.tidewater.freight.model.Shipment;
 import com.tidewater.freight.service.InMemoryRateRepository;
 import com.tidewater.freight.service.ShippingCalculator;
@@ -22,10 +23,17 @@ public class Demo {
                               String serviceLevel) {
         String request = zone + " " + weightKg + "kg " + serviceLevel;
         try {
-            BigDecimal cost = calculator.calculateCost(Shipment.of(zone, weightKg, serviceLevel));
-            System.out.println(request + " -> GHS " + cost);
+            Quote quote = calculator.calculateQuote(Shipment.of(zone, weightKg, serviceLevel));
+            System.out.println(request + " -> GHS " + quote.total());
+            printBreakdown(quote);
         } catch (ShippingException refusal) {
             System.out.println(request + " -> refused: " + refusal.getMessage());
         }
+    }
+
+    private static void printBreakdown(Quote quote) {
+        System.out.printf("    %-22s %8s%n", "zone cost", quote.zoneCost());
+        System.out.printf("    %-22s %8s%n", "heavy-item surcharge", quote.heavyItemSurcharge());
+        System.out.printf("    %-22s %8s%n", "service-level charge", quote.serviceLevelCharge());
     }
 }
