@@ -19,8 +19,8 @@ import java.util.Objects;
  */
 public class ShippingCalculator {
 
-    static final BigDecimal HEAVY_ITEM_THRESHOLD_KG = new BigDecimal("30");
-    static final BigDecimal HEAVY_ITEM_SURCHARGE = new BigDecimal("20.00");
+    private static final BigDecimal HEAVY_ITEM_THRESHOLD_KG = new BigDecimal("30");
+    private static final BigDecimal HEAVY_ITEM_SURCHARGE = new BigDecimal("20.00");
     private static final int MONEY_SCALE = 2;
 
     private final RateRepository rateRepository;
