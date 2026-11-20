@@ -4,6 +4,7 @@ import com.tidewater.freight.enums.ServiceLevel;
 import com.tidewater.freight.exceptions.UnknownZoneException;
 import com.tidewater.freight.interfaces.RateRepository;
 import com.tidewater.freight.interfaces.ZoneRate;
+import com.tidewater.freight.model.Quote;
 import com.tidewater.freight.model.Shipment;
 import com.tidewater.freight.model.Zone;
 import com.tidewater.freight.service.ShippingCalculator;
@@ -122,5 +123,42 @@ class ShippingCalculatorTest {
 
     private static Shipment expressShipment(String weightKg) {
         return new Shipment(ZONE, new BigDecimal(weightKg), ServiceLevel.EXPRESS);
+    }
+
+    @Test
+    void standardQuoteHasNoSurchargeOrServiceLevelCharge() {
+        givenZoneRate(FORTY_CEDIS);
+
+        assertEquals(new Quote(money("40.00"), money("0.00"), money("0.00"), money("40.00")),
+                calculator.calculateQuote(shipment("10")));
+    }
+
+    @Test
+    void expressQuoteShowsTheServiceLevelChargeOnItsOwnLine() {
+        givenZoneRate(FORTY_CEDIS);
+
+        assertEquals(new Quote(money("40.00"), money("0.00"), money("20.00"), money("60.00")),
+                calculator.calculateQuote(expressShipment("10")));
+    }
+
+    @Test
+    void heavyExpressQuoteShowsEveryRuleSeparately() {
+        givenZoneRate(FORTY_CEDIS);
+
+        assertEquals(new Quote(money("40.00"), money("20.00"), money("30.00"), money("90.00")),
+                calculator.calculateQuote(expressShipment("31")));
+    }
+
+    @Test
+    void quoteStillAddsUpWhenTheZoneCostIsRounded() {
+        givenZoneRate(weightKg -> new BigDecimal("10.005"));
+
+        assertEquals(new Quote(money("10.01"), money("0.00"), money("5.00"), money("15.01")),
+                calculator.calculateQuote(expressShipment("1")));
+    }
+
+
+    private static BigDecimal money(String amount) {
+        return new BigDecimal(amount);
     }
 }

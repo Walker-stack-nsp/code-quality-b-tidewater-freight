@@ -1,6 +1,7 @@
 package com.tidewater.freight;
 
 import com.tidewater.freight.exceptions.UnknownZoneException;
+import com.tidewater.freight.model.Quote;
 import com.tidewater.freight.model.Shipment;
 import com.tidewater.freight.service.InMemoryRateRepository;
 import com.tidewater.freight.service.ShippingCalculator;
@@ -84,5 +85,24 @@ public class ShippingCalculatorIntegrationTest {
         var shipment = Shipment.of("MOON", "10", "STANDARD");
 
         assertThrows(UnknownZoneException.class, () -> calculator.calculateCost(shipment));
+    }
+
+
+    @Test
+    void heavyExpressInternationalQuoteIsItemised() {
+        var shipment = Shipment.of("INTERNATIONAL", "40", "EXPRESS");
+
+        var expected = new Quote(new BigDecimal("625.00"), new BigDecimal("20.00"),
+                new BigDecimal("322.50"), new BigDecimal("967.50"));
+        assertEquals(expected, calculator.calculateQuote(shipment));
+    }
+
+    @Test
+    void fractionalWeightQuoteAddsUpToTheExactPrice() {
+        var shipment = Shipment.of("REGIONAL", "2.3", "EXPRESS");
+
+        var expected = new Quote(new BigDecimal("28.40"), new BigDecimal("0.00"),
+                new BigDecimal("14.20"), new BigDecimal("42.60"));
+        assertEquals(expected, calculator.calculateQuote(shipment));
     }
 }
