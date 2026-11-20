@@ -7,7 +7,6 @@ package com.tidewater.freight.exceptions;
  * between would otherwise have to declare it. Abstract, because callers should always see the
  * specific reason.
  */
-
 public abstract class ShippingException extends RuntimeException {
 
     protected ShippingException(String message) {

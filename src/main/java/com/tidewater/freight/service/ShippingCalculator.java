@@ -17,7 +17,6 @@ import java.util.Objects;
  * rules that are the same for every zone: the heavy-item surcharge, the service-level
  * multiplier, and rounding to pesewas.
  */
-
 public class ShippingCalculator {
 
     static final BigDecimal HEAVY_ITEM_THRESHOLD_KG = new BigDecimal("30");
