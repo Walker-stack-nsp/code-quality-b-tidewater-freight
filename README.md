@@ -2,6 +2,8 @@
 
 A small service that works out the cost of a shipment from its weight, destination zone and service level.
 
+It started as AI-generated code whose tests were green but proved almost nothing. This version has been refactored to standards: one job per class, the rate source injected, failures refused rather than hidden, and a test suite that catches real bugs.
+
 - **[`ANALYSIS.md`](ANALYSIS.md):** what was wrong with the original code and tests, written before any change. Problems are referred to below by their IDs there (C1–C11 for the code, T1–T3 and S1–S5 for the tests).
 - **This README:** how to run the service, how it's built, and why.
 
