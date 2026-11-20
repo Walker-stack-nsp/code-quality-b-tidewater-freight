@@ -44,7 +44,7 @@ Demo ──creates──► InMemoryRateRepository ──injected into──► 
        2. zone base cost = ZoneRate.baseCost(weight)
        3. + heavy-item surcharge (over 30 kg)
        4. × service-level multiplier
-       5. round to (2 dp)
+       5. round to pesewas (2 dp, half-up)
 ```
 
 | Class | Its one job |
@@ -168,3 +168,17 @@ public record MinimumChargeRate(BigDecimal ratePerKg, BigDecimal minimumCharge) 
 - **Every failure path has a test,** and the tests that rethrow check that the original cause is kept.
 - **Every test asserts a real result. None only checks that a mock was called.** Mocks are keyed by zone, so a calculator asking for the wrong zone fails the test anyway.
 - Names say the expected behaviour, imports are explicit, and each test checks one behaviour (§9, §11).
+
+## What the AI got wrong
+
+| Part | Verdict | Why |
+|---|---|---|
+| `RateRepository` interface | **Kept**, reshaped | The seam was the right idea. It now returns the zone's whole rule, and `Optional` for an unknown zone. |
+| `InMemoryRateRepository` | **Fixed** | The rates are now passed in, each zone's rule is complete, and an unknown zone returns empty instead of throwing a generic exception |
+| `ShippingCalculator` | **Rewritten** | It swallowed every failure as a price of 0, built its own dependency, held zone fees in an `if` chain, printed, and used `double` for money |
+| `Demo` | **Fixed** | It now wires the parts together and reports refusals |
+| The business rules and their order | **Kept** | Proved unchanged across 6,000 prices |
+| `pom.xml` (JUnit 5, Mockito, JaCoCo, PIT) | **Kept** | Already set up correctly |
+| T1 `calculatesACost` | **Rewritten** | `assertTrue(cost > 0)` accepts any positive number. It's now an exact price. |
+| T2 `calculatesExpressCost` | **Rewritten** | It mocked the class under test, so none of our code ran. The same 967.50 scenario now runs the real calculator. |
+| T3 `returnsACostForAShipment` | **Rewritten** | `assertNotNull` on a primitive `double` can never fail. It's now an exact price. |
