@@ -54,7 +54,7 @@ public class ShippingCalculator {
     public Quote calculateQuote(Shipment shipment) {
         Objects.requireNonNull(shipment, "shipment");
         BigDecimal zoneCost = rateFor(shipment.zone()).baseCost(shipment.weightKg());
-        BigDecimal surcharge = heavyItemSurcharge(shipment.weightKg());
+        BigDecimal surcharge = toPesewas(shipment.weightKg());
         BigDecimal total = toPesewas(shipment.serviceLevel().applyTo(zoneCost.add(surcharge)));
         BigDecimal zoneLine = toPesewas(zoneCost);
         return new Quote(zoneLine, surcharge, total.subtract(zoneLine).subtract(surcharge), total);
