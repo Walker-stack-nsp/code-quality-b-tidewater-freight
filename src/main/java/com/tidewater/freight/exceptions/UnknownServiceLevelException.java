@@ -8,7 +8,7 @@ import java.util.Arrays;
 public class UnknownServiceLevelException extends ShippingException {
 
     public UnknownServiceLevelException(String message) {
-        super(message);
+        super(messageFor(message));
     }
 
     public UnknownServiceLevelException(String code, Throwable cause) {
